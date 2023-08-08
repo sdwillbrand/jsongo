@@ -2,7 +2,6 @@ package jsongo
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 )
 
@@ -73,7 +72,7 @@ func (val *JSValue) ToString() (string, error) {
 	case Array:
 		v, ok := val.value.([]*JSValue)
 		if !ok {
-			log.Fatal("Cannot convert to JSArray struct in value")
+			return "", fmt.Errorf("%s", "Cannot convert to []*JSValue in value")
 		}
 		for index, i := range v {
 			s, _ := i.ToString()
@@ -85,7 +84,7 @@ func (val *JSValue) ToString() (string, error) {
 	case Object:
 		v, ok := val.value.(map[string]*JSValue)
 		if !ok {
-			log.Fatal("Cannot convert to JSObject struct")
+			return "", fmt.Errorf("%s", "Cannot convert to map[string]*JSValue struct")
 		}
 		result += "{"
 		amount := len(v)
@@ -102,13 +101,13 @@ func (val *JSValue) ToString() (string, error) {
 	case String:
 		v, ok := val.value.(string)
 		if !ok {
-			log.Fatal("Cannot convert to string")
+			return "", fmt.Errorf("%s", "Cannot convert to string")
 		}
 		result += "\"" + string(v) + "\""
 	case Boolean:
 		v, ok := val.value.(bool)
 		if !ok {
-			log.Fatal("Cannot convert to bool")
+			return "", fmt.Errorf("%s", "Cannot convert to bool")
 		}
 		if v {
 			result += "true"
@@ -120,11 +119,11 @@ func (val *JSValue) ToString() (string, error) {
 	case Number:
 		v, ok := val.value.(float64)
 		if !ok {
-			log.Fatal("Cannot convert to float")
+			return "", fmt.Errorf("%s", "Cannot convert to float")
 		}
 		result += strconv.FormatFloat(v, 'f', -1, 64)
 	default:
-		log.Fatal("Cannot convert to string")
+		return "", fmt.Errorf("%s", "Cannot convert to string")
 	}
 	return string(result), nil
 }
