@@ -74,6 +74,7 @@ func (val *JSValue) ToString() (string, error) {
 		if !ok {
 			return "", fmt.Errorf("%s", "Cannot convert to []*JSValue in value")
 		}
+		result += "["
 		for index, i := range v {
 			s, _ := i.ToString()
 			result += s
@@ -81,6 +82,7 @@ func (val *JSValue) ToString() (string, error) {
 				result += ", "
 			}
 		}
+		result += "]"
 	case Object:
 		v, ok := val.value.(map[string]*JSValue)
 		if !ok {
