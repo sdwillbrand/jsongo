@@ -1,4 +1,4 @@
-package example
+package main
 
 import (
 	"fmt"
@@ -12,6 +12,6 @@ func main() {
 	jsValue := jsongo.ParseFromString(jsonString)
 
 	if jsValue != nil {
-		fmt.Println(jsValue.String())
+		fmt.Println(jsValue.ToString())
 	}
 }
