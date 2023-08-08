@@ -2,31 +2,31 @@
 
 ## Table of Contents
 
-1. **Introduction**
-   - 1.1 Purpose
-   - 1.2 Features
-   - 1.3 Project Structure
-2. **Getting Started**
-   - 2.1 Installation
-   - 2.2 Usage Example
-3. **API Reference**
-   - 3.1 `ParseFromString(data string) *JSValue`
-   - 3.2 `ParseFromByte(data []byte) *JSValue`
-   - 3.3 `ParseFromRune(data []rune) *JSValue`
-4. **JSValue Struct**
-   - 4.1 `Type() Type`
-   - 4.2 `String() string`
-   - 4.3 `Int() (int64, error)`
-   - 4.4 `Float() (float64, error)`
-   - 4.5 `Bool() (bool, error)`
-   - 4.6 `Array() ([]*JSValue, error)`
-   - 4.7 `Object() (map[string]*JSValue, error)`
-
-5. **Contributing**
-   - 5.1 Bug Reports and Feature Requests
-   - 5.2 Pull Requests
-
-6. **License**
+- [JSONGO: Golang JSON Parser](#jsongo-golang-json-parser)
+  - [Table of Contents](#table-of-contents)
+  - [1. Introduction](#1-introduction)
+    - [1.1 Purpose](#11-purpose)
+    - [1.2 Features](#12-features)
+    - [1.3 Project Structure](#13-project-structure)
+  - [2. Getting Started](#2-getting-started)
+    - [2.1 Installation](#21-installation)
+    - [2.2 Usage Example](#22-usage-example)
+  - [3. API Reference](#3-api-reference)
+    - [3.1 `ParseFromString(data string) *JSValue`](#31-parsefromstringdata-string-jsvalue)
+    - [3.2 `ParseFromByte(data []byte) *JSValue`](#32-parsefrombytedata-byte-jsvalue)
+    - [3.3 `ParseFromRune(data []rune) *JSValue`](#33-parsefromrunedata-rune-jsvalue)
+  - [4. JSValue Struct](#4-jsvalue-struct)
+    - [4.1 `Type() Type`](#41-type-type)
+    - [4.2 `String() string`](#42-string-string)
+    - [4.3 `Int() (int64, error)`](#43-int-int64-error)
+    - [4.4 `Float() (float64, error)`](#44-float-float64-error)
+    - [4.5 `Bool() (bool, error)`](#45-bool-bool-error)
+    - [4.6 `Array() ([]*JSValue, error)`](#46-array-jsvalue-error)
+    - [4.7 `Object() (map[string]*JSValue, error)`](#47-object-mapstringjsvalue-error)
+  - [5. Contributing](#5-contributing)
+    - [5.1 Bug Reports and Feature Requests](#51-bug-reports-and-feature-requests)
+    - [5.2 Pull Requests](#52-pull-requests)
+  - [6. License](#6-license)
 
 ---
 
@@ -90,18 +90,18 @@ Here's a basic example of how to use JSONGO in your application:
 package main
 
 import (
-	"fmt"
-	"github.com/yourusername/jsongo"
+ "fmt"
+ "github.com/yourusername/jsongo"
 )
 
 func main() {
-	jsonString := `{"name": "John", "age": 30, "city": "New York"}`
+ jsonString := `{"name": "John", "age": 30, "city": "New York"}`
 
-	jsValue := jsongo.ParseFromString(jsonString)
+ jsValue := jsongo.ParseFromString(jsonString)
 
-	if jsValue != nil {
-		fmt.Println(jsValue.String())
-	}
+ if jsValue != nil {
+  fmt.Println(jsValue.String())
+ }
 }
 ```
 
