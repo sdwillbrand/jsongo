@@ -1,4 +1,4 @@
-package pkg
+package jsongo
 
 import (
 	"fmt"
@@ -6,9 +6,24 @@ import (
 	"strconv"
 )
 
+type JSType int64
+
+const (
+	String JSType = iota + 1
+	Number
+	Boolean
+	Null
+	Array
+	Object
+)
+
 type JSValue struct {
 	value interface{}
 	kind  JSType
+}
+
+func NewArray() []*JSValue {
+	return make([]*JSValue, 0, 10)
 }
 
 func NewValue() *JSValue {
@@ -23,6 +38,10 @@ func NewNumber(n float64) *JSValue {
 	return &JSValue{kind: Number, value: n}
 }
 
+func NewObject() map[string]*JSValue {
+	return make(map[string]*JSValue, 0)
+}
+
 func (val *JSValue) Equals(other *JSValue) bool {
 	if val.kind != other.kind {
 		return false
@@ -30,39 +49,45 @@ func (val *JSValue) Equals(other *JSValue) bool {
 		return false
 	} else {
 		if val.kind == Boolean {
-			v1, _ := val.GetBool()
-			v2, _ := other.GetBool()
+			v1, _ := val.Bool()
+			v2, _ := other.Bool()
 			return v1 == v2
 		} else if val.kind == Null {
 			return true
 		} else if val.kind == Number {
-			v1, _ := val.GetFloat()
-			v2, _ := other.GetFloat()
+			v1, _ := val.Float()
+			v2, _ := other.Float()
 			return v1 == v2
 		} else if val.kind == String {
-			v1, _ := val.GetString()
-			v2, _ := other.GetString()
+			v1, _ := val.String()
+			v2, _ := other.String()
 			return v1 == v2
 		}
 		return false
 	}
 }
 
-func (val *JSValue) String() string {
+func (val *JSValue) toString() (string, error) {
 	result := ""
 	switch val.kind {
 	case Array:
-		v, ok := val.value.(*JSArray)
+		v, ok := val.value.([]*JSValue)
 		if !ok {
 			log.Fatal("Cannot convert to JSArray struct in value")
 		}
-		result += v.String()
+		for _, i := range v {
+			s, _ := i.toString()
+			result += s
+		}
 	case Object:
-		v, ok := val.value.(*JSObject)
+		v, ok := val.value.(map[string]*JSValue)
 		if !ok {
 			log.Fatal("Cannot convert to JSObject struct")
 		}
-		result += v.String()
+		for k, v := range v {
+			s, _ := v.toString()
+			result += fmt.Sprintf("\"%s\" : %s", k, s)
+		}
 	case String:
 		v, ok := val.value.(string)
 		if !ok {
@@ -90,10 +115,10 @@ func (val *JSValue) String() string {
 	default:
 		log.Fatal("Cannot convert to string")
 	}
-	return string(result)
+	return string(result), nil
 }
 
-func (v *JSValue) GetFloat() (float64, error) {
+func (v *JSValue) Float() (float64, error) {
 	res, ok := v.value.(float64)
 	if !ok {
 		return 0, fmt.Errorf("%s", "Error: Not a number value")
@@ -102,7 +127,16 @@ func (v *JSValue) GetFloat() (float64, error) {
 	}
 }
 
-func (v *JSValue) GetString() (string, error) {
+func (v *JSValue) Int() (int64, error) {
+	res, ok := v.value.(float64)
+	if !ok {
+		return 0, fmt.Errorf("%s", "Error: Not a number value")
+	} else {
+		return int64(res), nil
+	}
+}
+
+func (v *JSValue) String() (string, error) {
 	res, ok := v.value.(string)
 	if !ok {
 		return "", fmt.Errorf("%s", "Error: Not a string value")
@@ -111,7 +145,7 @@ func (v *JSValue) GetString() (string, error) {
 	}
 }
 
-func (v *JSValue) GetBool() (bool, error) {
+func (v *JSValue) Bool() (bool, error) {
 	res, ok := v.value.(bool)
 	if !ok {
 		return false, fmt.Errorf("%s", "Error: Not a bool value")
@@ -120,8 +154,8 @@ func (v *JSValue) GetBool() (bool, error) {
 	}
 }
 
-func (v *JSValue) GetArray() (*JSArray, error) {
-	res, ok := v.value.(*JSArray)
+func (v *JSValue) Array() ([]*JSValue, error) {
+	res, ok := v.value.([]*JSValue)
 	if !ok {
 		return nil, fmt.Errorf("%s", "Error: Not an array value")
 	} else {
@@ -129,11 +163,15 @@ func (v *JSValue) GetArray() (*JSArray, error) {
 	}
 }
 
-func (v *JSValue) GetObject() (*JSObject, error) {
-	res, ok := v.value.(*JSObject)
+func (v *JSValue) Object() (map[string]*JSValue, error) {
+	res, ok := v.value.(map[string]*JSValue)
 	if !ok {
 		return nil, fmt.Errorf("%s", "Error: Not an object value")
 	} else {
 		return res, nil
 	}
+}
+
+func (v *JSValue) Type() JSType {
+	return v.kind
 }

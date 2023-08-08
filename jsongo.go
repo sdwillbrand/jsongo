@@ -1,4 +1,4 @@
-package pkg
+package jsongo
 
 import (
 	"bytes"
@@ -95,7 +95,7 @@ func parseArray(data []rune, cursor int) (*JSValue, int) {
 	if val == nil {
 		return nil, len(data)
 	}
-	arr.objects = append(arr.objects, val)
+	arr = append(arr, val)
 	cursor++
 	// Case 3: Multiple items
 	for cursor < len(data) {
@@ -108,7 +108,7 @@ func parseArray(data []rune, cursor int) (*JSValue, int) {
 			if val == nil {
 				return nil, len(data)
 			}
-			arr.objects = append(arr.objects, val)
+			arr = append(arr, val)
 		} else if cursor+1 < len(data) && unicode.IsSpace(data[cursor+1]) {
 			cursor++
 		} else if cursor < len(data) && data[cursor] == ']' || cursor+1 < len(data) && data[cursor+1] == ']' {
@@ -128,7 +128,7 @@ func parsePair(data []rune, cursor int) (string, *JSValue, int) {
 		var res *JSValue
 		res, cursor = parseString(data, cursor)
 		var err error
-		key, err = res.GetString()
+		key, err = res.String()
 		if err != nil {
 			return "", nil, len(data)
 		}
@@ -170,7 +170,7 @@ func parseObject(data []rune, cursor int) (*JSValue, int) {
 	if val == nil {
 		return nil, len(data)
 	}
-	obj.objects[key] = val
+	obj[key] = val
 	cursor++
 	for cursor < len(data) {
 		cursor = skipWhitespace(data, cursor)
@@ -186,7 +186,7 @@ func parseObject(data []rune, cursor int) (*JSValue, int) {
 			if val == nil {
 				return nil, len(data)
 			}
-			obj.objects[key] = val
+			obj[key] = val
 		} else if cursor < len(data) && data[cursor] == '}' {
 			break
 		} else if cursor+1 < len(data) && data[cursor+1] == '}' {

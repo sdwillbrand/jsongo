@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	jq "jsongo/pkg"
+	"github.com/countersoda/jsongo"
 )
 
 type StringSuit struct {
@@ -29,18 +29,18 @@ var n_StringSuites = [...](StringSuit){
 func TestParseString(t *testing.T) {
 	for i, stringSuite := range y_StringSuites {
 		data := stringSuite.content
-		str := jq.ParseFromRune(data)
+		str := jsongo.ParseFromRune(data)
 		if str == nil {
 			t.Fatalf("Test %d: Got nil, wanted %s", i, stringSuite.result)
 		}
-		result, _ := str.GetString()
+		result, _ := str.String()
 		if result != stringSuite.result {
 			t.Fatalf("Test %d: Got %s, wanted %s", i, result, stringSuite.result)
 		}
 	}
 	for i, stringSuite := range n_StringSuites {
 		data := stringSuite.content
-		str := jq.ParseFromRune(data)
+		str := jsongo.ParseFromRune(data)
 		if str != nil {
 			t.Fatalf("Test %d: Wanted error", i)
 		}

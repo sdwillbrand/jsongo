@@ -1,8 +1,9 @@
 package test
 
 import (
-	jq "jsongo/pkg"
 	"testing"
+
+	"github.com/countersoda/jsongo"
 )
 
 type BoolSuit struct {
@@ -23,18 +24,18 @@ var n_BoolSuites = [...](BoolSuit){
 func TestParseBoolean(t *testing.T) {
 	for _, boolSuite := range y_BoolSuites {
 		data := boolSuite.content
-		b := jq.ParseFromRune(data)
+		b := jsongo.ParseFromRune(data)
 		if b == nil {
 			t.Fatalf("Got nil, wanted %t", boolSuite.result)
 		}
-		result, _ := b.GetBool()
+		result, _ := b.Bool()
 		if result != boolSuite.result {
 			t.Fatalf("Got %t, wanted %t", result, boolSuite.result)
 		}
 	}
 	for _, boolSuite := range n_BoolSuites {
 		data := boolSuite.content
-		b := jq.ParseFromRune(data)
+		b := jsongo.ParseFromRune(data)
 		if b != nil {
 			t.Fatalf("Wanted error")
 		}

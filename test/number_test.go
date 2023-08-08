@@ -1,8 +1,9 @@
 package test
 
 import (
-	jq "jsongo/pkg"
 	"testing"
+
+	"github.com/countersoda/jsongo"
 )
 
 type NumberSuit struct {
@@ -28,18 +29,18 @@ var n_NumberSuites = [...](NumberSuit){
 func TestParseNumber(t *testing.T) {
 	for i, numberSuite := range y_NumberSuites {
 		data := numberSuite.content
-		number := jq.ParseFromRune(data)
+		number := jsongo.ParseFromRune(data)
 		if number == nil {
 			t.Fatalf("Test: %d, Got nil, wanted %f", i, numberSuite.result)
 		}
-		result, _ := number.GetFloat()
+		result, _ := number.Float()
 		if result != numberSuite.result {
 			t.Fatalf("Test: %d, Got %f, wanted %f", i, result, numberSuite.result)
 		}
 	}
 	for i, numberSuite := range n_NumberSuites {
 		data := numberSuite.content
-		number := jq.ParseFromRune(data)
+		number := jsongo.ParseFromRune(data)
 		if number != nil {
 			t.Fatalf("Test: %d, Wanted error", i)
 		}
