@@ -135,6 +135,9 @@ func parsePair(data []rune, cursor int) (string, *JSValue, int) {
 	}
 	cursor++ // Skip " of key
 	cursor = skipWhitespace(data, cursor)
+	if cursor < len(data) && data[cursor] == ':' {
+		cursor++
+	}
 	if cursor+1 < len(data) && data[cursor+1] == ':' {
 		cursor += 2
 	}
@@ -160,7 +163,6 @@ func parseObject(data []rune, cursor int) (*JSValue, int) {
 		return result, cursor
 	}
 	cursor = skipWhitespace(data, cursor)
-	cursor++
 	// Case 2: Single item
 	var key string
 	var val *JSValue
@@ -173,7 +175,10 @@ func parseObject(data []rune, cursor int) (*JSValue, int) {
 	for cursor < len(data) {
 		cursor = skipWhitespace(data, cursor)
 		if cursor+1 < len(data) && data[cursor+1] == ',' {
-			cursor += 2
+			cursor++
+		}
+		if cursor < len(data) && data[cursor] == ',' {
+			cursor++
 			cursor = skipWhitespace(data, cursor)
 			var key string
 			var val *JSValue
@@ -182,8 +187,8 @@ func parseObject(data []rune, cursor int) (*JSValue, int) {
 				return nil, len(data)
 			}
 			obj.objects[key] = val
-		} else if cursor+1 < len(data) && unicode.IsSpace(data[cursor+1]) {
-			cursor++
+		} else if cursor < len(data) && data[cursor] == '}' {
+			break
 		} else if cursor+1 < len(data) && data[cursor+1] == '}' {
 			cursor++
 			break
