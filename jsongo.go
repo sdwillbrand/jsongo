@@ -79,15 +79,15 @@ func parseValue(data []rune, cursor int) (*JSValue, int) {
 func parseArray(data []rune, cursor int) (*JSValue, int) {
 	cursor++ // Skip [
 	arr := NewArray()
-	value := NewValue()
-	value.kind = Array
+	jsvalue := NewValue()
+	jsvalue.kind = Array
 	if cursor >= len(data) {
 		return nil, len(data)
 	}
 	// Case 1: Empty Array
 	if data[cursor] == ']' {
-		value.value = arr
-		return value, cursor
+		jsvalue.value = arr
+		return jsvalue, cursor
 	}
 	// Case 2: Single item
 	var val *JSValue
@@ -100,8 +100,7 @@ func parseArray(data []rune, cursor int) (*JSValue, int) {
 	// Case 3: Multiple items
 	for cursor < len(data) {
 		cursor = skipWhitespace(data, cursor)
-		if cursor < len(data) && data[cursor] == ',' ||
-			cursor+1 < len(data) && data[cursor+1] == ',' {
+		if cursor < len(data) && data[cursor] == ',' {
 			cursor++
 			cursor = skipWhitespace(data, cursor)
 			val, cursor = parseValue(data, cursor)
@@ -109,17 +108,20 @@ func parseArray(data []rune, cursor int) (*JSValue, int) {
 				return nil, len(data)
 			}
 			arr = append(arr, val)
-		} else if cursor+1 < len(data) && unicode.IsSpace(data[cursor+1]) {
 			cursor++
-		} else if cursor < len(data) && data[cursor] == ']' || cursor+1 < len(data) && data[cursor+1] == ']' {
+		} else if cursor < len(data) && data[cursor] == ']' {
+			break
+		} else if cursor+1 < len(data) && data[cursor+1] == ']' {
 			cursor++
 			break
+		} else if cursor+1 < len(data) && data[cursor+1] == ',' {
+			cursor++
 		} else {
 			return nil, len(data)
 		}
 	}
-	value.value = arr
-	return value, cursor
+	jsvalue.value = arr
+	return jsvalue, cursor
 }
 
 func parsePair(data []rune, cursor int) (string, *JSValue, int) {
