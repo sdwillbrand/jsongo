@@ -207,6 +207,7 @@ func parseFalse(data []rune, cursor int) (*JSValue, int) {
 		return nil, len(data)
 	}
 }
+
 func parseTrue(data []rune, cursor int) (*JSValue, int) {
 	if cursor+4 <= len(data) && bytes.Equal([]byte(string(data[cursor:cursor+4])), []byte("true")) {
 		return &JSValue{value: true, kind: Boolean}, cursor + 3
@@ -214,6 +215,7 @@ func parseTrue(data []rune, cursor int) (*JSValue, int) {
 		return nil, len(data)
 	}
 }
+
 func parseNull(data []rune, cursor int) (*JSValue, int) {
 	if cursor+4 < len(data) && bytes.Equal([]byte(string(data[cursor:cursor+4])), []byte("null")) {
 		return &JSValue{value: nil, kind: Null}, cursor + 3
