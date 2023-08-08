@@ -67,7 +67,7 @@ func (val *JSValue) Equals(other *JSValue) bool {
 	}
 }
 
-func (val *JSValue) toString() (string, error) {
+func (val *JSValue) ToString() (string, error) {
 	result := ""
 	switch val.kind {
 	case Array:
@@ -75,19 +75,30 @@ func (val *JSValue) toString() (string, error) {
 		if !ok {
 			log.Fatal("Cannot convert to JSArray struct in value")
 		}
-		for _, i := range v {
-			s, _ := i.toString()
+		for index, i := range v {
+			s, _ := i.ToString()
 			result += s
+			if index+1 != len(v) {
+				result += ", "
+			}
 		}
 	case Object:
 		v, ok := val.value.(map[string]*JSValue)
 		if !ok {
 			log.Fatal("Cannot convert to JSObject struct")
 		}
+		result += "{"
+		amount := len(v)
+		j := 0
 		for k, v := range v {
-			s, _ := v.toString()
+			s, _ := v.ToString()
 			result += fmt.Sprintf("\"%s\" : %s", k, s)
+			if j+1 != amount {
+				result += ", "
+			}
+			j++
 		}
+		result += "}"
 	case String:
 		v, ok := val.value.(string)
 		if !ok {
