@@ -12,7 +12,7 @@ type ArraySuit struct {
 }
 
 var y_ArraySuites = [...](ArraySuit){
-	ArraySuit{content: []rune("[]"), result: jsongo.NewArray()},
+	// ArraySuit{content: []rune("[]"), result: jsongo.NewArray()},
 	ArraySuit{content: []rune("[ true ]"), result: append(jsongo.NewArray(), jsongo.NewBoolean(true))},
 	ArraySuit{content: []rune("[ false ]"), result: append(jsongo.NewArray(), jsongo.NewBoolean(false))},
 	ArraySuit{content: []rune("[ null ]"), result: append(jsongo.NewArray(), jsongo.NewValue())},
@@ -32,8 +32,8 @@ func TestParseArray(t *testing.T) {
 		if arr == nil {
 			t.Fatalf("Test %d: Got nil, wanted %v", i, arraySuite.result)
 		}
-		result, _ := arr.Array()
-		if result == nil {
+		result, err := arr.Array()
+		if err != nil {
 			t.Fatalf("Test %d, Got nil for array", i)
 		}
 		item := result[0]

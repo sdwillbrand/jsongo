@@ -36,8 +36,8 @@ func TestParseObject(t *testing.T) {
 		if arr == nil {
 			t.Fatalf("Test %d: Got nil, wanted %v", i, arraySuite.result)
 		}
-		result, _ := arr.Object()
-		if result == nil {
+		result, err := arr.Object()
+		if err != nil {
 			t.Fatalf("Test %d, Got nil for array", i)
 		}
 		item := result["a"]
