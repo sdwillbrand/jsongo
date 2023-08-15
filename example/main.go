@@ -13,5 +13,7 @@ func main() {
 
 	if jsValue != nil {
 		fmt.Println(jsValue.ToString())
+	} else {
+		fmt.Println("Invalid json")
 	}
 }
