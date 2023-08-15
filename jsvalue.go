@@ -21,10 +21,6 @@ type JSValue struct {
 	kind  JSType
 }
 
-func NewArray() []*JSValue {
-	return make([]*JSValue, 0, 10)
-}
-
 func NewValue() *JSValue {
 	return &JSValue{kind: Null, value: nil}
 }
@@ -35,6 +31,10 @@ func NewBoolean(b bool) *JSValue {
 
 func NewNumber(n float64) *JSValue {
 	return &JSValue{kind: Number, value: n}
+}
+
+func NewArray() []*JSValue {
+	return make([]*JSValue, 0, 10)
 }
 
 func NewObject() map[string]*JSValue {
