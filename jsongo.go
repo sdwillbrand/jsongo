@@ -101,7 +101,7 @@ func parseArray(data []rune, cursor int) (*JSValue, int) {
 	arr = append(arr, val)
 	cursor++
 	// Case 3: Multiple items
-	for cursor < len(data) {
+	for {
 		cursor = skipWhitespace(data, cursor)
 		if cursor < len(data) && data[cursor] == ',' {
 			cursor++
@@ -114,11 +114,6 @@ func parseArray(data []rune, cursor int) (*JSValue, int) {
 			cursor++
 		} else if cursor < len(data) && data[cursor] == ']' {
 			break
-		} else if cursor+1 < len(data) && data[cursor+1] == ']' {
-			cursor++
-			break
-		} else if cursor+1 < len(data) && data[cursor+1] == ',' {
-			cursor++
 		} else {
 			return nil, len(data)
 		}
@@ -177,11 +172,8 @@ func parseObject(data []rune, cursor int) (*JSValue, int) {
 	}
 	obj[key] = val
 	cursor++
-	for cursor < len(data) {
+	for {
 		cursor = skipWhitespace(data, cursor)
-		if cursor+1 < len(data) && data[cursor+1] == ',' {
-			cursor++
-		}
 		if cursor < len(data) && data[cursor] == ',' {
 			cursor++
 			cursor = skipWhitespace(data, cursor)
@@ -194,9 +186,6 @@ func parseObject(data []rune, cursor int) (*JSValue, int) {
 			obj[key] = val
 			cursor++
 		} else if cursor < len(data) && data[cursor] == '}' {
-			break
-		} else if cursor+1 < len(data) && data[cursor+1] == '}' {
-			cursor++
 			break
 		} else {
 			return nil, len(data)
