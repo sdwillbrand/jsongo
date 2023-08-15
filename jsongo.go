@@ -9,10 +9,13 @@ import (
 
 func ParseFromRune(data []rune) *JSValue {
 	cursor := 0
-	val := NewValue()
+	var val *JSValue
+	if len(data) == 0 {
+		return nil
+	}
 	for cursor < len(data) {
 		c := data[cursor]
-		if val.value != nil && !unicode.IsSpace(c) {
+		if val != nil && val.value != nil && !unicode.IsSpace(c) {
 			// log.Fatal("End of file expected.")
 			return nil
 		}
@@ -189,6 +192,7 @@ func parseObject(data []rune, cursor int) (*JSValue, int) {
 				return nil, len(data)
 			}
 			obj[key] = val
+			cursor++
 		} else if cursor < len(data) && data[cursor] == '}' {
 			break
 		} else if cursor+1 < len(data) && data[cursor+1] == '}' {
@@ -219,7 +223,7 @@ func parseTrue(data []rune, cursor int) (*JSValue, int) {
 }
 
 func parseNull(data []rune, cursor int) (*JSValue, int) {
-	if cursor+4 < len(data) && bytes.Equal([]byte(string(data[cursor:cursor+4])), []byte("null")) {
+	if cursor+4 <= len(data) && bytes.Equal([]byte(string(data[cursor:cursor+4])), []byte("null")) {
 		return &JSValue{value: nil, kind: Null}, cursor + 3
 	} else {
 		return nil, len(data)
@@ -241,14 +245,20 @@ func parseNumber(data []rune, cursor int) (*JSValue, int) {
 	frac := ""
 	exp := ""
 	expSign := ""
-	if rune(data[cursor]) == '-' {
+	if data[cursor] == '-' {
 		sign = "-"
 		cursor++
 	}
 	base, cursor = parseDigit(data, cursor)
+	if base == "" || len(base) > 1 && base[0] == '0' {
+		return nil, len(data)
+	}
 	if cursor+1 < len(data) && data[cursor+1] == '.' {
 		cursor = cursor + 2
 		frac, cursor = parseDigit(data, cursor)
+		if frac == "" {
+			return nil, len(data)
+		}
 	}
 	if cursor+1 < len(data) && (data[cursor+1] == 'e' || data[cursor+1] == 'E') {
 		cursor += 2
