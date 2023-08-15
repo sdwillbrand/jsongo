@@ -132,14 +132,17 @@ func parsePair(data []rune, cursor int) (string, *JSValue, int) {
 		if err != nil {
 			return "", nil, len(data)
 		}
+	} else {
+		return "", nil, len(data)
 	}
 	cursor++ // Skip " of key
 	cursor = skipWhitespace(data, cursor)
 	if cursor < len(data) && data[cursor] == ':' {
 		cursor++
-	}
-	if cursor+1 < len(data) && data[cursor+1] == ':' {
+	} else if cursor+1 < len(data) && data[cursor+1] == ':' {
 		cursor += 2
+	} else {
+		return "", nil, len(data)
 	}
 	var val *JSValue
 	val, cursor = parseValue(data, cursor)
@@ -222,7 +225,7 @@ func parseNull(data []rune, cursor int) (*JSValue, int) {
 func parseDigit(data []rune, cursor int) (string, int) {
 	r := ""
 	j := 0
-	for ; cursor+j < len(data) && unicode.IsDigit(rune(data[cursor+j])); j++ {
+	for ; cursor+j < len(data) && data[cursor+j] >= '0' && data[cursor+j] <= '9'; j++ {
 		r += string(data[cursor+j])
 	}
 	return r, cursor + j - 1
@@ -286,12 +289,10 @@ func parseString(data []rune, cursor int) (*JSValue, int) {
 	if cursor >= len(data) {
 		return nil, len(data)
 	}
-	token := data[cursor]
-	for cursor < len(data) && token != '"' {
-		if token == '\\' {
+	for cursor < len(data) && data[cursor] != '"' {
+		if data[cursor] == '\\' {
 			cursor++
-			token = data[cursor]
-			switch token {
+			switch data[cursor] {
 			case '"':
 				value += string('"')
 				cursor++
@@ -333,11 +334,12 @@ func parseString(data []rune, cursor int) (*JSValue, int) {
 				// log.Fatal("Error: Invalid escape character")
 				return nil, len(data)
 			}
-		} else {
-			value += string(token)
+		} else if !unicode.IsControl(data[cursor]) || data[cursor] == '\u007f' {
+			value += string(data[cursor])
 			cursor++
+		} else {
+			return nil, len(data)
 		}
-		token = data[cursor]
 	}
 	return &JSValue{value: value, kind: String}, cursor
 }
