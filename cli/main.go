@@ -2,22 +2,29 @@ package main
 
 import (
 	"flag"
-	"log"
 	"os"
 
 	"github.com/countersoda/jsongo"
 )
 
 func main() {
+	flag.Parse()
 	filePath := flag.Arg(0)
-	println(filePath)
 	content, err := os.ReadFile(filePath)
+	defer func() {
+		if r := recover(); r != nil {
+			os.Exit(1)
+		} else {
+			os.Exit(0)
+		}
+	}()
 	if err != nil {
-		log.Fatalf("%s", err.Error())
+		os.Exit(1)
 	}
 	res := jsongo.ParseFromByte(content)
 	if res == nil {
-		log.Fatal()
+		os.Exit(1)
+	} else {
+		os.Exit(0)
 	}
-
 }
