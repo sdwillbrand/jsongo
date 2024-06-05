@@ -79,7 +79,7 @@ jsongo/
 To use JSONGO in your project, use the `go get` command:
 
 ```sh
-go get github.com/countersoda/jsongo
+go get github.com/sdwillbrand/jsongo
 ```
 
 ### 2.2 Usage Example
@@ -91,7 +91,7 @@ package main
 
 import (
  "fmt"
- "github.com/yourusername/jsongo"
+ "github.com/sdwillbrand/jsongo"
 )
 
 func main() {
